@@ -29,9 +29,12 @@
   <h1>Guess the Coin Flip!</h1>
   <p>Choose your guess:</p>
   <button onclick="flipCoin('heads')">Heads</button>
-  <button onclick="flipCoin('tails')">Tails</button>
+  <button onclick="flipCoin('tails')">Tails>
+  <p id="attempts">Failed attempts: 0</p>
 
   <script>
+    let failedAttempts = 0;
+
     function flipCoin(userGuess) {
       const coinSides = ['heads', 'tails'];
       const randomIndex = Math.floor(Math.random() * coinSides.length);
@@ -40,7 +43,8 @@
       if (userGuess === coinResult) {
         window.location.href = 'correct_guess.html';
       } else {
-        alert('Wrong guess! Try again.');
+        failedAttempts++;
+        document.getElementById('attempts').textContent = `Failed attempts: ${failedAttempts}`;
       }
     }
   </script>
