@@ -29,7 +29,7 @@
   <h1>Guess the Coin Flip!</h1>
   <p>Choose your guess:</p>
   <button onclick="flipCoin('heads')">Heads</button>
-  <button onclick="flipCoin('tails')">Tails>
+  <button onclick="flipCoin('tails')">Tails</button>
   <p id="attempts">Failed attempts: 0</p>
 
   <script>
@@ -41,7 +41,7 @@
       const coinResult = coinSides[randomIndex];
 
       if (userGuess === coinResult) {
-        window.location.href = 'correct_guess.html';
+        window.location.href = 'tiktaktoe.html';
       } else {
         failedAttempts++;
         document.getElementById('attempts').textContent = `Failed attempts: ${failedAttempts}`;

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hangman Game</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 10px;
+      background-color: #f2f2f2;
+    }
+
+    h1 {
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+
+    .hangman-container {
+      max-width: 300px;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .word-display {
+      font-size: 1.5em;
+      margin-bottom: 20px;
+    }
+
+    .input-area input[type="text"] {
+      padding: 8px;
+      margin-right: 10px;
+      width: 50px;
+      text-align: center;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .input-area button {
+      padding: 8px 16px;
+      cursor: pointer;
+      border-radius: 5px;
+      border: none;
+      background-color: #3498db;
+      color: #fff;
+    }
+
+    .input-area button:hover {
+      background-color: #2980b9;
+    }
+
+    .guesses-left {
+      font-size: 1.2em;
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Hangman Game</h1>
+  <div class="hangman-container">
+    <div class="word-display" id="wordDisplay"></div>
+    <div class="guesses-left">Guesses left: <span id="guessesLeft">6</span></div>
+    <div class="input-area">
+      <input type="text" id="guessInput" maxlength="1" placeholder="Guess">
+      <button onclick="checkLetter()">Go</button>
+      <button onclick="resetGame()">Reset</button>
+    </div>
+  </div>
+  <script>
+    // Game logic here...
+    // (Insert the JavaScript code provided in the previous example)
+    // Array of words for the game
+    const words = [
+      "santa",
+      "reindeer",
+      "christmas",
+      "jinglebells",
+      "presents",
+      "snowman",
+      "ornaments",
+      "candycane",
+      "gingerbread",
+      "wreath",
+      "stocking",
+      "mistletoe",
+      "sleigh",
+      "cookies",
+      "lights",
+      "celebration",
+      "elves",
+      "holly",
+      "chimney",
+      "frosty"
+    ];
+
+let word; // The randomly selected word
+let guessedWord; // The word being guessed with correct guesses revealed
+let wrongGuesses; // Incorrectly guessed letters
+let guessesLeft; // Number of guesses remaining
+
+// Function to initialize the game
+function initGame() {
+  // Select a random word from the words array
+  word = words[Math.floor(Math.random() * words.length)].toLowerCase();
+  guessedWord = "_".repeat(word.length); // Create a string of underscores to represent the word
+  wrongGuesses = [];
+  guessesLeft = 6;
+
+  updateDisplay();
+}
+
+// Function to update the display
+function updateDisplay() {
+  document.getElementById('wordDisplay').innerText = guessedWord.split('').join(' ');
+  document.getElementById('guessesLeft').innerText = guessesLeft;
+}
+
+// Function to check if the guessed letter is in the word
+function checkLetter() {
+  const guessInput = document.getElementById('guessInput');
+  const letter = guessInput.value.toLowerCase();
+
+  if (letter && word.includes(letter)) {
+    for (let i = 0; i < word.length; i++) {
+      if (word[i] === letter) {
+        guessedWord = guessedWord.substring(0, i) + letter + guessedWord.substring(i + 1);
+      }
+    }
+  } else {
+    if (!wrongGuesses.includes(letter)) {
+      wrongGuesses.push(letter);
+      guessesLeft--;
+    }
+  }
+
+  guessInput.value = ''; // Clear the input field
+  updateDisplay();
+  checkGameStatus();
+}
+
+// Function to check if the game is won or lost
+function checkGameStatus() {
+  if (guessedWord === word) {
+    alert('Congratulations! You won!');
+    resetGame();
+  } else if (guessesLeft === 0) {
+    alert(`Sorry, you lost! The word was "${word}".`);
+    resetGame();
+  }
+}
+
+// Function to reset the game
+function resetGame() {
+  initGame();
+}
+
+// Initialize the game when the page loads
+window.onload = initGame;
+
+  </script>
+</body>
+</html>

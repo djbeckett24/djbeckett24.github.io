@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tic Tac Toe</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    /* CSS styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .board {
+      display: grid;
+      grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+      gap: 5px;
+      width: 90vw;
+      max-width: 300px;
+      height: 90vw;
+      max-height: 300px;
+      margin: 0 auto;
+      border: 2px solid black;
+    }
+
+    .cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3em;
+      cursor: pointer;
+      border: 1px solid black;
+    }
+
+    .cell:hover {
+      background-color: lightgray;
+    }
+
+    button {
+      margin-top: 20px;
+      font-size: 1em;
+      padding: 8px 20px;
+      cursor: pointer;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+    }
+      #drawMessage {
+      margin-top: 10px;
+      color: red;
+      display: none;
+      }
+    
+  </style>
+</head>
+<body>
+  <h1 style="text-align: center;">Tic Tac Toe</h1>
+  <div class="container">
+    <div id="message">Your turn!</div>
+    <div id="board" class="board">
+      <div class="cell" onclick="handleCellClick(0)"></div>
+      <div class="cell" onclick="handleCellClick(1)"></div>
+      <div class="cell" onclick="handleCellClick(2)"></div>
+      <div class="cell" onclick="handleCellClick(3)"></div>
+      <div class="cell" onclick="handleCellClick(4)"></div>
+      <div class="cell" onclick="handleCellClick(5)"></div>
+      <div class="cell" onclick="handleCellClick(6)"></div>
+      <div class="cell" onclick="handleCellClick(7)"></div>
+      <div class="cell" onclick="handleCellClick(8)"></div>
+    </div>
+    <button onclick="resetGame()">Reset Game</button>
+    <div id="drawMessage">It's a draw! Please reset the game.</div>
+  </div>
+
+  <script>
+
+
+    // JavaScript code
+    let currentPlayer = 'X';
+    let cells = ['', '', '', '', '', '', '', '', ''];
+    let message = document.getElementById('message');
+    let isGameOver = false;
+
+    function handleCellClick(cellIndex) {
+      if (cells[cellIndex] === '' && !isGameOver) {
+        cells[cellIndex] = currentPlayer;
+        document.getElementsByClassName('cell')[cellIndex].textContent = currentPlayer;
+        checkGameStatus();
+        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+
+        if (currentPlayer === 'O' && !isGameOver) {
+          message.textContent = 'AI is thinking...';
+          setTimeout(aiTurn, 500); // Adjust timeout if needed
+        } else {
+          message.textContent = 'Your turn!';
+        }
+      }
+    }
+
+    function aiTurn() {
+      if (!isGameOver) {
+        let bestMove = findBestMove();
+        handleCellClick(bestMove.index);
+      }
+    }
+
+    function checkGameStatus() {
+      const winningConditions = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6]
+      ];
+
+      for (let condition of winningConditions) {
+        const [a, b, c] = condition;
+        if (cells[a] !== '' && cells[a] === cells[b] && cells[a] === cells[c]) {
+          message.textContent = `${cells[a]} wins!`;
+          isGameOver = true;
+          if (cells[a] === 'X') {
+            window.location.href = 'hangman.html'; // Redirect to win page
+          } else {
+            window.location.href = 'coinflip.html'; // Redirect to lose page
+          }
+          return;
+        }
+      }
+
+      if (!cells.includes('')) {
+        document.getElementById('drawMessage').style.display = 'block';
+        isGameOver = true;
+        return;
+      }
+    }
+
+    function resetGame() {
+      currentPlayer = 'X';
+      cells = ['', '', '', '', '', '', '', '', ''];
+      isGameOver = false;
+      document.querySelectorAll('.cell').forEach(cell => cell.textContent = '');
+      message.textContent = 'Your turn!';
+      document.getElementById('drawMessage').style.display = 'none';
+    }
+
+    function findBestMove() {
+  let bestScore = -Infinity;
+  let bestMove;
+
+  for (let i = 0; i < 9; i++) {
+    if (cells[i] === '') {
+      if (Math.random() < 0.1) { // 1 in 10 chance for a mistake
+        return { index: i };
+      }
+
+      cells[i] = 'O';
+      let score = minimax(cells, 0, false);
+      cells[i] = '';
+      if (score > bestScore) {
+        bestScore = score;
+        bestMove = i;
+      }
+    }
+  }
+
+  return { index: bestMove };
+}
+
+function minimax(board, depth, isMaximizing) {
+  const scores = {
+    X: -1,
+    O: 1,
+    draw: 0
+  };
+
+  let result = checkWinner(board);
+  if (result !== null) {
+    return scores[result];
+  }
+
+  if (isMaximizing) {
+    let bestScore = -Infinity;
+    for (let i = 0; i < 9; i++) {
+      if (board[i] === '') {
+        board[i] = 'O';
+        let score = minimax(board, depth + 1, false);
+        board[i] = '';
+        bestScore = Math.max(score, bestScore);
+      }
+    }
+    return bestScore;
+  } else {
+    let bestScore = Infinity;
+    for (let i = 0; i < 9; i++) {
+      if (board[i] === '') {
+        board[i] = 'X';
+        let score = minimax(board, depth + 1, true);
+        board[i] = '';
+        bestScore = Math.min(score, bestScore);
+      }
+    }
+    return bestScore;
+  }
+}
+
+function checkWinner(board) {
+  const winningConditions = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6]
+  ];
+
+  for (let condition of winningConditions) {
+    const [a, b, c] = condition;
+    if (board[a] !== '' && board[a] === board[b] && board[a] === board[c]) {
+      return board[a];
+    }
+  }
+
+  if (!board.includes('')) {
+    return 'draw';
+  }
+
+  return null;
+}
+  </script>
+</body>
+</html>
+
+
