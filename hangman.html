@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Hangman Game</title>
+  <title>Christmas Hangman Game</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
       margin: 0;
-      padding: 10px;
+      padding: 20px;
       background-color: #f2f2f2;
     }
 
@@ -19,7 +19,7 @@
     }
 
     .hangman-container {
-      max-width: 300px;
+      max-width: 400px;
       margin: 0 auto;
       background-color: #fff;
       padding: 20px;
@@ -32,49 +32,43 @@
       margin-bottom: 20px;
     }
 
-    .input-area input[type="text"] {
-      padding: 8px;
-      margin-right: 10px;
-      width: 50px;
-      text-align: center;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-
-    .input-area button {
-      padding: 8px 16px;
-      cursor: pointer;
-      border-radius: 5px;
-      border: none;
-      background-color: #3498db;
-      color: #fff;
-    }
-
-    .input-area button:hover {
-      background-color: #2980b9;
-    }
-
     .guesses-left {
       font-size: 1.2em;
       margin-bottom: 15px;
     }
+
+    .letter-list {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .letter-item {
+      display: inline-block;
+      margin: 5px;
+      padding: 8px 12px;
+      cursor: pointer;
+      border-radius: 5px;
+      background-color: #3498db;
+      color: #fff;
+      border: none;
+    }
+
+    .letter-item:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
   </style>
 </head>
 <body>
-  <h1>Hangman Game</h1>
+  <h1>Christmas Hangman Game</h1>
   <div class="hangman-container">
     <div class="word-display" id="wordDisplay"></div>
     <div class="guesses-left">Guesses left: <span id="guessesLeft">6</span></div>
-    <div class="input-area">
-      <input type="text" id="guessInput" maxlength="1" placeholder="Guess">
-      <button onclick="checkLetter()">Go</button>
-      <button onclick="resetGame()">Reset</button>
-    </div>
   </div>
+  <div class="letter-list" id="letterList"></div>
   <script>
-    // Game logic here...
-    // (Insert the JavaScript code provided in the previous example)
-    // Array of words for the game
     const words = [
       "santa",
       "reindeer",
@@ -98,70 +92,75 @@
       "frosty"
     ];
 
-let word; // The randomly selected word
-let guessedWord; // The word being guessed with correct guesses revealed
-let wrongGuesses; // Incorrectly guessed letters
-let guessesLeft; // Number of guesses remaining
+    let chosenLetters = [];
+    let selectedWord = words[Math.floor(Math.random() * words.length)];
+    let displayWord = selectedWord.split('').map(letter => '_').join(' '); // Add spaces between letters
+    let guessesLeft = 6;
 
-// Function to initialize the game
-function initGame() {
-  // Select a random word from the words array
-  word = words[Math.floor(Math.random() * words.length)].toLowerCase();
-  guessedWord = "_".repeat(word.length); // Create a string of underscores to represent the word
-  wrongGuesses = [];
-  guessesLeft = 6;
+    function initGame() {
+      chosenLetters = [];
+      selectedWord = words[Math.floor(Math.random() * words.length)];
+      displayWord = selectedWord.split('').map(letter => '_').join(' '); // Add spaces between letters
+      guessesLeft = 6;
+      document.getElementById('wordDisplay').textContent = displayWord;
+      document.getElementById('guessesLeft').textContent = guessesLeft;
 
-  updateDisplay();
-}
+      const letterList = document.getElementById('letterList');
+      letterList.innerHTML = ''; // Clear existing letters
 
-// Function to update the display
-function updateDisplay() {
-  document.getElementById('wordDisplay').innerText = guessedWord.split('').join(' ');
-  document.getElementById('guessesLeft').innerText = guessesLeft;
-}
-
-// Function to check if the guessed letter is in the word
-function checkLetter() {
-  const guessInput = document.getElementById('guessInput');
-  const letter = guessInput.value.toLowerCase();
-
-  if (letter && word.includes(letter)) {
-    for (let i = 0; i < word.length; i++) {
-      if (word[i] === letter) {
-        guessedWord = guessedWord.substring(0, i) + letter + guessedWord.substring(i + 1);
+      const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+      for (let i = 0; i < alphabet.length; i++) {
+        const letter = alphabet[i];
+        const letterButton = document.createElement('button');
+        letterButton.textContent = letter.toUpperCase();
+        letterButton.classList.add('letter-item');
+        letterButton.onclick = function() {
+          if (!chosenLetters.includes(letter)) {
+            chosenLetters.push(letter);
+            this.disabled = true;
+            checkLetter(letter);
+          }
+        };
+        letterList.appendChild(letterButton);
       }
     }
-  } else {
-    if (!wrongGuesses.includes(letter)) {
-      wrongGuesses.push(letter);
-      guessesLeft--;
+
+    function checkLetter(letter) {
+      if (selectedWord.includes(letter)) {
+        for (let i = 0; i < selectedWord.length; i++) {
+          if (selectedWord[i] === letter) {
+            const index = i * 2; // Double the index to account for spaces
+            displayWord = displayWord.substring(0, index) + letter + displayWord.substring(index + 1);
+          }
+        }
+        document.getElementById('wordDisplay').textContent = displayWord;
+
+        if (!displayWord.includes('_')) {
+          // Win condition
+          const winPopup = confirm('Congratulations! You won!\nClick OK to continue.');
+          if (winPopup) {
+            window.location.href = 'index.html'; // Replace with the URL of the win page
+          } else {
+            initGame(); // Restart the game if the popup is dismissed
+          }
+        }
+      } else {
+        guessesLeft--;
+        document.getElementById('guessesLeft').textContent = guessesLeft;
+
+        if (guessesLeft === 0) {
+          // Lose condition
+          const losePopup = confirm(`Sorry, you lost! The word was "${selectedWord}".\nClick OK to continue.`);
+          if (losePopup) {
+            window.location.href = 'coinflip.html'; // Replace with the URL of the lose page
+          } else {
+            initGame(); // Restart the game if the popup is dismissed
+          }
+        }
+      }
     }
-  }
 
-  guessInput.value = ''; // Clear the input field
-  updateDisplay();
-  checkGameStatus();
-}
-
-// Function to check if the game is won or lost
-function checkGameStatus() {
-  if (guessedWord === word) {
-    alert('Congratulations! You won!');
-    resetGame();
-  } else if (guessesLeft === 0) {
-    alert(`Sorry, you lost! The word was "${word}".`);
-    resetGame();
-  }
-}
-
-// Function to reset the game
-function resetGame() {
-  initGame();
-}
-
-// Initialize the game when the page loads
-window.onload = initGame;
-
+    window.onload = initGame;
   </script>
 </body>
 </html>
