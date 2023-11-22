@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Coin Flip Game</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    h1 {
+      margin-top: 20px;
+    }
+    button {
+      margin: 10px;
+      padding: 15px 30px;
+      font-size: 18px;
+      border-radius: 8px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Guess the Coin Flip!</h1>
+  <p>Choose your guess:</p>
+  <button onclick="flipCoin('heads')">Heads</button>
+  <button onclick="flipCoin('tails')">Tails</button>
+
+  <script>
+    function flipCoin(userGuess) {
+      const coinSides = ['heads', 'tails'];
+      const randomIndex = Math.floor(Math.random() * coinSides.length);
+      const coinResult = coinSides[randomIndex];
+
+      if (userGuess === coinResult) {
+        window.location.href = 'correct_guess.html';
+      } else {
+        alert('Wrong guess! Try again.');
+      }
+    }
+  </script>
+</body>
+</html>
