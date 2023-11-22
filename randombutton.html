@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Random Button Presses</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+      font-family: Arial, sans-serif;
+    }
+
+    #randomButton {
+      padding: 10px 20px;
+      font-size: 1.2em;
+      border: none;
+      border-radius: 5px;
+      background-color: #3498db;
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      position: absolute;
+    }
+  </style>
+</head>
+<body>
+  <button id="randomButton">Press Me</button>
+
+  <script>
+    let totalClicks = 0;
+    let requiredClicks = 0;
+    let movingAfter5Clicks = false;
+
+    function getRandomNumber(min, max) {
+      return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+
+    function moveButtonRandomly() {
+      const button = document.getElementById('randomButton');
+      const screenWidth = window.innerWidth - button.offsetWidth;
+      const screenHeight = window.innerHeight - button.offsetHeight;
+
+      const newLeft = getRandomNumber(0, screenWidth);
+      const newTop = getRandomNumber(0, screenHeight);
+
+      button.style.left = newLeft + 'px';
+      button.style.top = newTop + 'px';
+    }
+
+    function handleClick() {
+      totalClicks++;
+      document.getElementById('randomButton').textContent = 'Press Me (' + totalClicks + ')';
+
+      if (totalClicks > 5) {
+        movingAfter5Clicks = true;
+        moveButtonRandomly();
+      }
+
+      if (movingAfter5Clicks) {
+        moveButtonRandomly();
+      }
+
+      if (totalClicks === requiredClicks) {
+        const confirmation = confirm('Congratulations! You clicked ' + requiredClicks + ' times. Click OK to go to a new page.');
+        if (confirmation) {
+          window.location.href = 'sudoku.html'; // Replace with your desired URL
+        } else {
+          initializeGame();
+        }
+      }
+    }
+
+    function initializeGame() {
+      requiredClicks = getRandomNumber(10, 30);
+      totalClicks = 0;
+      document.getElementById('randomButton').textContent = 'Press Me';
+      moveButtonRandomly();
+    }
+
+    document.getElementById('randomButton').addEventListener('click', handleClick);
+    window.addEventListener('load', initializeGame);
+  </script>
+</body>
+</html>
