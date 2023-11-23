@@ -111,6 +111,15 @@
     incorrectPopup.addEventListener('click', function() {
       window.location.href = 'coinflip.html';
     });
+
+    // Stop recognition when leaving or closing the page
+    window.addEventListener('pagehide', function() {
+      recognition.stop();
+    });
+
+    window.addEventListener('beforeunload', function() {
+      recognition.stop();
+    });
   </script>
 </body>
 </html>
