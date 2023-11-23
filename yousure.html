@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirmation Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 18px;
+      margin: 10px;
+      cursor: pointer;
+    }
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 400px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Do you want to proceed?</h1>
+
+<button id="yesBtn">Yes</button>
+<button id="noBtn">No</button>
+
+<!-- Modal 1 -->
+<div class="modal" id="myModal">
+  <div class="modal-content">
+    <p id="modalText"></p>
+    <button id="modalYesBtn">Yes</button>
+    <button id="modalNoBtn">No</button>
+  </div>
+</div>
+
+<!-- Modal 2 -->
+<div class="modal" id="modalNo">
+  <div class="modal-content">
+    <p>You should be more sure of yourself</p>
+    <button id="OkBtn">OK</button>
+  </div>
+</div>
+
+<script>
+let answeredMainQuestion = false;
+let confirmationCounter = 0;
+
+const confirmations = [
+  "Are you absolutely sure?",
+  "Is this your final decision?",
+  "Confirm your choice once more.",
+  "Are you certain you want to proceed?",
+  "Last chance, are you sure?",
+  "Do you want to reconsider?",
+  "You're almost there, are you sure?",
+  "Confirm your decision.",
+  "Are you 100% sure?",
+  "This is your last opportunity, are you sure?"
+];
+
+function openModal(modalId) {
+  const modal = document.getElementById(modalId);
+  modal.style.display = "block";
+}
+
+function closeModal(modalId) {
+  const modal = document.getElementById(modalId);
+  modal.style.display = "none";
+}
+
+function getConfirmationMessage() {
+  return confirmations[confirmationCounter++];
+}
+
+document.getElementById("yesBtn").addEventListener("click", function() {
+  if (!answeredMainQuestion) {
+    answeredMainQuestion = true;
+    openModal("myModal");
+    document.getElementById("modalText").innerText = getConfirmationMessage();
+  } else {
+    if (confirmationCounter < confirmations.length - 1) {
+      document.getElementById("modalText").innerText = getConfirmationMessage();
+    } else {
+      window.location.href = "math.html";
+    }
+  }
+});
+
+document.getElementById("noBtn").addEventListener("click", function() {
+    if (!answeredMainQuestion) {
+    answeredMainQuestion = true;
+    openModal("myModal");
+    document.getElementById("modalText").innerText = getConfirmationMessage();
+  } else {
+    if (confirmationCounter < confirmations.length - 1) {
+      document.getElementById("modalText").innerText = getConfirmationMessage();
+    } else {
+      window.location.href = "math.html";
+    }
+  }
+});
+
+document.getElementById("modalNoBtn").addEventListener("click", function() {
+  openModal("modalNo");
+});
+
+document.getElementById("modalYesBtn").addEventListener("click", function() {
+  if (answeredMainQuestion && confirmationCounter < confirmations.length - 1) {
+    document.getElementById("modalText").innerText = getConfirmationMessage();
+  } else if (confirmationCounter === confirmations.length - 1) {
+    window.location.href = "math.html";
+  }
+});
+
+// Close the second modal and redirect to another page when closed
+document.getElementById("modalNo").addEventListener("click", function() {
+  closeModal("modalNo");
+  window.location.href = "coinflip.html";
+});
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Christmas Math Challenge</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+      background-color: #f3f3f3;
+    }
+    h1 {
+      color: #333;
+    }
+    .container {
+      max-width: 80%;
+      margin: 0 auto;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #fff;
+      border: 2px solid #333;
+      padding: 20px;
+      z-index: 999;
+    }
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 998;
+    }
+  </style>
+</head>
+<body onload="generateProblem()">
+  <div class="container">
+    <h1>Christmas Math Challenge</h1>
+    <p>Read the story and solve the math problem:</p>
+    <p>On Christmas Eve Santa is in the middle of delivering presents. He started with  
+        <span id="startingPresents"></span> 
+        presents, so far he has delivered to
+        <span id="initialHouses"></span> 
+        houses. Each of these houses received
+        <span id="initialPresentperHouse"></span> 
+        presents, except one house received 
+        <span id="oneHouse"></span> 
+        presents. He has
+        <span id="streetsLeft"></span> 
+        more streets to deliver to, each street has
+        <span id="housePerStreet"></span> 
+        houses, each of these houses receives
+        <span id="presentPerHouse"></span> 
+        presents. How many presents does he have left in the end?
+    </p>
+
+    <input type="number" id="userGuess" placeholder="Enter your guess">
+    <button onclick="checkAnswer()">Check Answer</button>
+    <div class="popup" id="successPopup">
+      <p id="successMessage">Congratulations! You solved it correctly! The correct answer was <span id="correctAnswer"></span>.</p>
+      <button onclick="redirectToCongratulations()">Close</button>
+    </div>
+    <div class="popup" id="failurePopup">
+      <p>Oops! Incorrect answer. The correct answer was <span id="correctAnswerFailure"></span>.</p>
+      <button onclick="hideFailurePopup()">Close</button>
+    </div>
+    <div class="overlay" id="overlay"></div>
+  </div>
+
+  <script>
+    function generateProblem() {
+      let startingPresents = 0;
+      let initialHouses = 0;
+      let initialPresentperHouse = 0;
+      let oneHouse = 0;
+      let streetsLeft = 0;
+      let housePerStreet = 0;
+      let presentPerHouse = 0;
+      let remainingGifts = -1
+
+      while(remainingGifts<0){
+        startingPresents = Math.floor(Math.random() * 50) + 50; // Initial gifts (10 to 59)
+        initialHouses = Math.floor(Math.random() * 5) + 1; // initialHouses (5 to 24)
+        initialPresentperHouse = Math.floor(Math.random() * 2) + 2; // Number of streets (2 to 5)
+        oneHouse = Math.floor(Math.random() * 6) + 1; // Subtracted gifts per street (1 to 5)
+        streetsLeft = Math.floor(Math.random() * 4) + 1; // Houses per street (3 to 10)
+        housePerStreet = Math.floor(Math.random() * 4) + 4; // Gifts per house (1 to 3)
+        presentPerHouse = Math.floor(Math.random() * 3) + 2; // Gifts per house (1 to 3)
+        
+        const totalGiftsGiven =(initialHouses*initialPresentperHouse)+oneHouse+(streetsLeft*housePerStreet*presentPerHouse);
+        
+         remainingGifts = startingPresents - totalGiftsGiven;
+      }
+        
+      document.getElementById('startingPresents').textContent = startingPresents;
+      document.getElementById('initialHouses').textContent = initialHouses;
+      document.getElementById('initialPresentperHouse').textContent = initialPresentperHouse;
+      document.getElementById('oneHouse').textContent = oneHouse;
+      document.getElementById('streetsLeft').textContent = streetsLeft;
+      document.getElementById('housePerStreet').textContent = housePerStreet;
+      document.getElementById('presentPerHouse').textContent = presentPerHouse;
+        
+        // Repeat generation until the final answer is greater than or equal to 0
+    }
+
+    function checkAnswer() {
+
+        const userAnswer = parseInt(document.getElementById('userGuess').value);
+
+        const startingPresents = parseInt( document.getElementById('startingPresents').textContent);
+        const initialHouses = parseInt(document.getElementById('initialHouses').textContent);
+        const initialPresentperHouse = parseInt(document.getElementById('initialPresentperHouse').textContent);
+        const oneHouse = parseInt(document.getElementById('oneHouse').textContent);
+        const streetsLeft = parseInt(document.getElementById('streetsLeft').textContent);
+        const housePerStreet = parseInt(document.getElementById('housePerStreet').textContent);
+        const presentPerHouse = parseInt(document.getElementById('presentPerHouse').textContent);
+
+        const totalGiftsGiven =(initialHouses*initialPresentperHouse)+oneHouse+(streetsLeft*housePerStreet*presentPerHouse);
+        
+        const remainingGifts = startingPresents - totalGiftsGiven;
+
+      if (!isNaN(userAnswer) && userAnswer === remainingGifts) {
+        document.getElementById('successPopup').style.display = 'block';
+        document.getElementById('overlay').style.display = 'block';
+        document.getElementById('correctAnswer').textContent = remainingGifts;
+        document.getElementById('successMessage').style.display = 'block';
+      } else {
+        document.getElementById('failurePopup').style.display = 'block';
+        document.getElementById('overlay').style.display = 'block';
+        document.getElementById('correctAnswerFailure').textContent = remainingGifts;
+      }
+    }
+
+    function redirectToCongratulations() {
+      window.location.href = 'congratulations.html'; // Redirect to congratulations page
+    }
+
+    function hideFailurePopup() {
+        window.location.href = 'coinflip.html';
+    }
+  </script>
+</body>
+</html>
