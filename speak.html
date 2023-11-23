@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Speech Recognition Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+      background-color: #f3f3f3;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-bottom: 20px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #2980b9;
+    }
+    .popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 20px;
+      background-color: white;
+      border: 2px solid #3498db;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <h1>Speech Recognition Game</h1>
+  <p>Please say:</p>
+  <p id="randomStatement"></p>
+  
+  <button id="startButton">Start</button>
+
+  <div id="correctPopup" class="popup">
+    <p id="correctRecordedStatement"></p>
+    <p>Correct statement! Click anywhere to continue.</p>
+  </div>
+
+  <div id="incorrectPopup" class="popup">
+    <p id="incorrectRecordedStatement"></p>
+    <p>Incorrect statement! Click anywhere to continue.</p>
+  </div>
+
+  <script>
+    const statements = [
+      "David is great", "David is amazing", "David is so clever",
+      "Sally sold seashells by the seashore", "David is wonderful", "David is brilliant",
+      "David is excellent", "David is so funny",
+      "David is the best", "David is my favorite relative"
+    ];
+
+
+    const randomIndex = Math.floor(Math.random() * statements.length);
+    const randomStatement = statements[randomIndex].toLowerCase();
+
+    document.getElementById('randomStatement').textContent = `"${randomStatement}"`;
+
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+
+    const startButton = document.getElementById('startButton');
+    const correctPopup = document.getElementById('correctPopup');
+    const incorrectPopup = document.getElementById('incorrectPopup');
+
+    startButton.addEventListener('click', function() {
+      recognition.start();
+      startButton.textContent = 'Listening...';
+    });
+
+    recognition.onresult = function(event) {
+      const transcript = event.results[0][0].transcript.toLowerCase();
+      
+      if (transcript === randomStatement) {
+        document.getElementById('correctRecordedStatement').textContent = `You said: "${transcript}"`;
+        correctPopup.style.display = 'block';
+      } else {
+        document.getElementById('incorrectRecordedStatement').textContent = `You said: "${transcript}"`;
+        incorrectPopup.style.display = 'block';
+      }
+    };
+
+    // Close popups on click
+    [correctPopup, incorrectPopup].forEach(popup => {
+      popup.addEventListener('click', function() {
+        popup.style.display = 'none';
+      });
+    });
+
+    // Redirect after closing popup
+    correctPopup.addEventListener('click', function() {
+      window.location.href = 'index.html';
+    });
+
+    incorrectPopup.addEventListener('click', function() {
+      window.location.href = 'coinflip.html';
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Button Timer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    button {
+      padding: 15px 30px;
+      font-size: 18px;
+      border-radius: 8px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      cursor: pointer;
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+
+<button id="actionButton">Button</button>
+
+<script>
+  const startTime = Date.now();
+
+  function getRandomTime(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  const button = document.getElementById('actionButton');
+  button.addEventListener('click', function() {
+    const elapsedTime = Date.now() - startTime;
+    const timerDuration = getRandomTime(5, 30) * 1000; // Convert seconds to milliseconds
+
+    if (elapsedTime > timerDuration) {
+      const waitedTime = elapsedTime / 1000;
+      alert(`You won! You waited at least ${timerDuration/1000} seconds.`);
+      window.location.href = 'speak.html';
+    } else {
+      const waitedTime = elapsedTime / 1000;
+      alert(`You lost! You couldn't wait ${timerDuration/1000} seconds.`);
+      window.location.href = 'coinflip.html';
+    }
+  });
+</script>
+
+</body>
+</html>

@@ -68,7 +68,7 @@
       if (totalClicks === requiredClicks) {
         const confirmation = confirm('Congratulations! You clicked ' + requiredClicks + ' times. Click OK to go to a new page.');
         if (confirmation) {
-          window.location.href = 'sudoku.html'; // Replace with your desired URL
+          window.location.href = 'memory.html'; // Replace with your desired URL
         } else {
           initializeGame();
         }
@@ -76,7 +76,7 @@
     }
 
     function initializeGame() {
-      requiredClicks = getRandomNumber(10, 30);
+      requiredClicks = getRandomNumber(10, 20);
       totalClicks = 0;
       document.getElementById('randomButton').textContent = 'Press Me';
       moveButtonRandomly();

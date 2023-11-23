@@ -1,0 +1,162 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memory Game</title>
+  <style>
+    /* Add your CSS styles here */
+    /* You can customize the styling for your game */
+    /* This is a simple example */
+
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      margin-top: 20px;
+      color: #333;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin: 20px auto;
+      max-width: 300px;
+    }
+
+    .card {
+      background-color: #fff;
+      border-radius: 5px;
+      padding: 20px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      font-size: 24px;
+    }
+
+    .card.open {
+      background-color: #4CAF50;
+      color: #fff;
+      pointer-events: none;
+    }
+
+    .popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #fff;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      z-index: 999;
+    }
+
+    .counter {
+      margin-top: 10px;
+      font-size: 18px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Memory Game</h1>
+
+<div class="counter" id="livesCounter">Lives: 15</div>
+
+<div class="grid" id="gameGrid"></div>
+
+<div class="popup" id="successPopup" style="display: none;">
+  <h2>Congratulations!</h2>
+  <p>You won the game!</p>
+  <button onclick="redirectToPageOne()">Close</button>
+</div>
+
+<div class="popup" id="failPopup" style="display: none;">
+  <h2>Game Over!</h2>
+  <p>You lost all your lives.</p>
+  <button onclick="redirectToPageTwo()">Close</button>
+</div>
+
+<script>
+  let lives = 15;
+  let openedCards = [];
+
+  const symbols = ['☻', '☻', '♥', '♥', '♦', '♦', '♣', '♣', '♠', '♠', '★', '★', '☎', '☎', '✈', '✈'];
+
+  function shuffle(array) {
+    let currentIndex = array.length, randomIndex;
+    while (currentIndex !== 0) {
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+      [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+    }
+    return array;
+  }
+
+  function createGame() {
+    const shuffledSymbols = shuffle(symbols);
+    const gameGrid = document.getElementById('gameGrid');
+
+    for (let i = 0; i < shuffledSymbols.length; i++) {
+      const card = document.createElement('div');
+      card.classList.add('card');
+      card.dataset.symbol = shuffledSymbols[i];
+      card.textContent = '?';
+      card.addEventListener('click', flipCard);
+      gameGrid.appendChild(card);
+    }
+  }
+
+  function flipCard() {
+    if (openedCards.length < 2 && !this.classList.contains('open')) {
+      this.textContent = this.dataset.symbol;
+      this.classList.add('open');
+      openedCards.push(this);
+
+      if (openedCards.length === 2) {
+        setTimeout(checkMatch, 1000);
+      }
+    }
+  }
+
+  function checkMatch() {
+    if (openedCards[0].dataset.symbol !== openedCards[1].dataset.symbol) {
+      openedCards.forEach(card => {
+        card.textContent = '?';
+        card.classList.remove('open');
+      });
+      lives--;
+      document.getElementById('livesCounter').textContent = `Lives: ${lives}`;
+      if (lives <= 0) {
+        document.getElementById('failPopup').style.display = 'block';
+      }
+    } else {
+      if (document.querySelectorAll('.card:not(.open)').length === 0) {
+        document.getElementById('successPopup').style.display = 'block';
+      }
+    }
+    openedCards = [];
+  }
+
+  function redirectToPageOne() {
+    window.location.href = 'marbles.html'; // Replace with your page URL
+  }
+
+  function redirectToPageTwo() {
+    window.location.href = 'coinflip.html'; // Replace with your page URL
+  }
+
+  createGame();
+</script>
+
+</body>
+</html>
