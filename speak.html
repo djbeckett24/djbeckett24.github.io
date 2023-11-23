@@ -93,6 +93,7 @@
         document.getElementById('incorrectRecordedStatement').textContent = `You said: "${transcript}"`;
         incorrectPopup.style.display = 'block';
       }
+      recognition.stop(); // Stop listening after processing speech
     };
 
     // Close popups on click
