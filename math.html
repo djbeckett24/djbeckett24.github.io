@@ -101,14 +101,14 @@
 
       while(remainingGifts<0){
         startingPresents = Math.floor(Math.random() * 50) + 50; // Initial gifts (10 to 59)
-        initialHouses = Math.floor(Math.random() * 5) + 1; // initialHouses (5 to 24)
+        initialHouses = Math.floor(Math.random() * 5) + 2; // initialHouses (5 to 24)
         initialPresentperHouse = Math.floor(Math.random() * 2) + 2; // Number of streets (2 to 5)
         oneHouse = Math.floor(Math.random() * 6) + 1; // Subtracted gifts per street (1 to 5)
         streetsLeft = Math.floor(Math.random() * 4) + 1; // Houses per street (3 to 10)
         housePerStreet = Math.floor(Math.random() * 4) + 4; // Gifts per house (1 to 3)
         presentPerHouse = Math.floor(Math.random() * 3) + 2; // Gifts per house (1 to 3)
         
-        const totalGiftsGiven =(initialHouses*initialPresentperHouse)+oneHouse+(streetsLeft*housePerStreet*presentPerHouse);
+        const totalGiftsGiven =((initialHouses-1)*initialPresentperHouse)+oneHouse+(streetsLeft*housePerStreet*presentPerHouse);
         
          remainingGifts = startingPresents - totalGiftsGiven;
       }
@@ -136,7 +136,7 @@
         const housePerStreet = parseInt(document.getElementById('housePerStreet').textContent);
         const presentPerHouse = parseInt(document.getElementById('presentPerHouse').textContent);
 
-        const totalGiftsGiven =(initialHouses*initialPresentperHouse)+oneHouse+(streetsLeft*housePerStreet*presentPerHouse);
+        const totalGiftsGiven =((initialHouses-1)*initialPresentperHouse)+oneHouse+(streetsLeft*housePerStreet*presentPerHouse);
         
         const remainingGifts = startingPresents - totalGiftsGiven;
 
@@ -153,7 +153,7 @@
     }
 
     function redirectToCongratulations() {
-      window.location.href = 'congratulations.html'; // Redirect to congratulations page
+      window.location.href = 'wordle.html'; // Redirect to congratulations page
     }
 
     function hideFailurePopup() {

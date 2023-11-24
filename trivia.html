@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Christmas Trivia Quiz</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            margin-top: 30px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to the Christmas Trivia Quiz!</h1>
+
+    <div id="quiz-container">
+        <h2 id="question"></h2>
+        <div id="options"></div>
+    </div>
+
+    <script>
+        const questions = [
+    {
+        question: "In the song 'Frosty the Snowman,' what made Frosty come to life?",
+        options: ["A magic hat", "A scarf", "A carrot nose", "A pair of gloves"],
+        answer: 0
+    },
+    {
+        question: "Which country is credited with the tradition of placing presents in socks hanging over the fireplace?",
+        options: ["United States", "Germany", "Italy", "Netherlands"],
+        answer: 3
+    },
+    {
+        question: "What popular Christmas beverage is also known as 'milk punch'?",
+        options: ["Hot Chocolate", "Eggnog", "Apple Cider", "Mulled Wine"],
+        answer: 1
+    },
+    {
+        question: "Which plant is often used as a Christmas decoration and is known for its red and green leaves?",
+        options: ["Poinsettia", "Mistletoe", "Holly", "Ivy"],
+        answer: 0
+    },
+    {
+        question: "Elvis isn't having a White Christmas, what colour is his Christmas?",
+        options: ["Blue", "Black", "Red", "Green"],
+        answer: 0
+    },
+    {
+        question: "How many reindeer does santa have?",
+        options: ["8", "9", "7", "10"],
+        answer: 1
+    },
+    {
+        question: "Which song is currently the best-selling single of all time?",
+        options: ["'White Christmas' by Bing Crosby", "'Jingle Bell Rock' by Bobby Helms", "'All I Want for Christmas Is You' by Mariah Carey", "'Feliz Navidad' by José Feliciano"],
+        answer: 2
+    },
+    {
+        question: "According to the song, what did my true love give to me on the eighth day of Christmas?",
+        options: ["Eight children singing", "Eight geese a-laying", "Eight lords a-leaping", "Eight maids a-milking"],
+        answer: 3
+    },
+    {
+        question: "Which of the following is not a nickname for Santa?",
+        options: ["Jeff", "Saint Nick", "Kris Kringle", "Père Noël"],
+        answer: 0
+    },
+    {
+        question: "How many ghosts show up in A Christmas Carol?",
+        options: ["4", "3", "5", "2"],
+        answer: 0
+    }
+];
+
+const quizContainer = document.getElementById("quiz-container");
+        const questionElem = document.getElementById("question");
+        const optionsContainer = document.getElementById("options");
+
+        let currentQuestion;
+        let correctAnswers = 0;
+
+        startQuiz();
+
+        function startQuiz() {
+            // Shuffle the array of questions
+            questions.sort(() => Math.random() - 0.5);
+
+            currentQuestion = 0;
+            showQuestion();
+        }
+
+        function showQuestion() {
+            questionElem.textContent = questions[currentQuestion].question;
+
+            optionsContainer.innerHTML = "";
+
+            questions[currentQuestion].options.forEach((option, index) => {
+                const button = document.createElement("button");
+                button.textContent = option;
+                button.onclick = () => checkAnswer(index);
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        function checkAnswer(chosenIndex) {
+            if (chosenIndex === questions[currentQuestion].answer) {
+                correctAnswers++;
+            }
+
+            currentQuestion++;
+
+            if (currentQuestion < 5) {
+                showQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            quizContainer.style.display = "none";
+
+            if (correctAnswers >= 4) {
+                alert(`Congratulations! You got ${correctAnswers} out of 5 correct!`);
+                window.location.href = "number.html";
+            } else {
+                alert(`Sorry! You only got ${correctAnswers} out of 5 correct. Better luck next time!`);
+                window.location.href = "coinflip.html";
+            }
+        }
+        
+    </script>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logic Puzzle Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        #logicRules {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #logicRules h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        #logicRules ul {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+
+        #logicRules li {
+            margin-bottom: 8px;
+        }
+
+        input {
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 5px;
+            color: #fff;
+            z-index: 9999;
+        }
+
+        .popup-content {
+            text-align: center;
+        }
+
+        .close-btn {
+            background-color: #e74c3c;
+            padding: 5px 10px;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="logicRules">
+        <h2>Logic Rules:</h2>
+        <ul>
+            <li>The first digit is greater than the third digit.</li>
+            <li>The sum of the second and third digit is 6.</li>
+            <li>The sum of the second and fourth digit is less than 8.</li>
+            <li>The first and fourth digit are within 2 numbers of each other</li>
+            <li>The fourth digit is greater than 4.</li>
+            <li>All digits in the number are unique.</li>
+        </ul>
+    </div>
+
+    <form id="puzzleForm">
+        <label for="numberInput">Enter a 4-digit number that satisfies all rules:</label>
+        <br>
+        <input type="number" id="numberInput" minlength="4" maxlength="4" required>
+        <br>
+        <button type="button" onclick="checkSolution()">Submit</button>
+    </form>
+
+    <div class="popup" id="correctPopup">
+        <div class="popup-content">
+            <h2>Congratulations!</h2>
+            <p>You've found the correct solution!</p>
+            <button class="close-btn" onclick="goToPage('correct.html')">Continue</button>
+        </div>
+    </div>
+
+    <div class="popup" id="wrongPopup">
+        <div class="popup-content">
+            <h2>Oops!</h2>
+            <p>Sorry, that's not the correct solution.</p>
+            <button class="close-btn" onclick="goToPage('wrong.html')">Try Again</button>
+        </div>
+    </div>
+
+    <script>
+        function checkSolution() {
+            const userInput = document.getElementById('numberInput').value;
+            const uniqueDigits = new Set(userInput);
+
+            if (
+                userInput.length === 4 &&
+                uniqueDigits.size === 4 &&
+                userInput[0] > userInput[2] &&
+                (parseInt(userInput[1]) + parseInt(userInput[3])) < 8 &&
+                (parseInt(userInput[1]) + parseInt(userInput[2])) === 6 &&
+                Math.abs(userInput[0] - userInput[3]) <= 2 &&
+                userInput[3] > 4
+            ) {
+                // If all conditions are met, it's a valid solution
+                // Handle what you want to do if the solution is correct
+                alert("Congratulations! You've found a valid solution!");
+                window.location.href = "congratulations.html";
+            } else {
+                // If any condition is not met, it's not a valid solution
+                // Handle what you want to do if the solution is incorrect
+                alert("Oops! This is not a valid solution. Please try again.");
+                window.location.href = "coinflip.html";
+            }
+        }
+
+        function goToPage(url) {
+            window.location.href = url;
+        }
+    </script>
+</body>
+
+</html>

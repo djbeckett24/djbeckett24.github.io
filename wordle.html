@@ -1,0 +1,220 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Christmas Wordle</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      background-color: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      font-size: 36px;
+      margin-bottom: 20px;
+      color: #d9534f;
+    }
+
+    .word-display {
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+
+    .input-area input {
+      padding: 8px;
+      margin-right: 10px;
+      width: 100px;
+      text-align: center;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .attempts {
+      margin-top: 20px;
+      font-style: italic;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      background-color: #d9534f;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #c9302c;
+    }
+
+    .guessed-words {
+      margin-top: 30px;
+      text-align: left;
+    }
+
+    .guessed-word {
+      margin-bottom: 8px;
+    }
+
+    .letter {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      line-height: 20px;
+      text-align: center;
+      margin-right: 5px;
+      border-radius: 50%;
+      font-weight: bold;
+    }
+
+    .correct-letter {
+      background-color: green;
+      color: white;
+    }
+
+    .misplaced-letter {
+      background-color: yellow;
+    }
+
+    .incorrect-letter {
+      background-color: red;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Christmas Wordle</h1>
+    <div class="word-display" id="wordDisplay"></div>
+    <div class="input-area">
+      <input type="text" id="guessInput" maxlength="5" placeholder="Enter your guess">
+      <button onclick="checkGuess()">Check</button>
+    </div>
+    <div class="attempts" id="attempts"></div>
+    <div class="guessed-words" id="guessedWords"></div>
+    <div id="redirectButton" style="display: none;">
+      <button onclick="redirectToNextPage()">Next Page</button>
+    </div>
+  </div>
+
+  <script>
+    const words = [
+      "holly",
+      "gifts",
+      "sleds",
+      "candy",
+      "angel",
+      "frost",
+      "merry",
+      "jolly",
+      "snowy",
+      "santa",
+      "peace",
+      "faith",
+      "bells"
+    ];
+
+    let selectedWord = words[Math.floor(Math.random() * words.length)];
+    const attemptsAllowed = 6;
+    let attemptsLeft = attemptsAllowed;
+    let guessedWords = [];
+
+    function displayWord() {
+      let display = "";
+      for (let letter of selectedWord) {
+        display += `<span class="letter" id="${letter}"></span>`;
+      }
+      document.getElementById("wordDisplay").innerHTML = display;
+    }
+
+    function checkGuess() {
+      const guessInput = document.getElementById("guessInput");
+      const guess = guessInput.value.toLowerCase().trim();
+
+      if (guess.length !== 5 || !/^[a-zA-Z]+$/.test(guess)) {
+        alert("Please enter a 5-letter word using only letters.");
+        return;
+      }
+
+      // Clear the input field after button press
+      guessInput.value = '';
+
+      if (guess === selectedWord) {
+        document.getElementById("wordDisplay").innerHTML = selectedWord.split('').map(letter => `<span class="letter correct-letter">${letter}</span>`).join('');
+        document.getElementById("attempts").textContent = `Congratulations! You guessed the word!`;
+        document.getElementById("redirectButton").style.display = "block";
+        return;
+      }
+
+      let guessedWord = guess.split('');
+      let lettersMap = {};
+
+      for (let i = 0; i < selectedWord.length; i++) {
+        const letter = selectedWord[i];
+        lettersMap[letter] = lettersMap[letter] || [];
+        lettersMap[letter].push(i);
+      }
+
+      let correctLetters = 0;
+      let misplacedLetters = 0;
+      let incorrectLetters = 0;
+      let letterDisplay = '';
+
+      for (let i = 0; i < guessedWord.length; i++) {
+        const letter = guessedWord[i];
+
+        if (selectedWord.includes(letter)) {
+          if (lettersMap[letter].includes(i)) {
+            correctLetters++;
+            letterDisplay += `<span class="letter correct-letter">${letter}</span>`;
+          } else {
+            misplacedLetters++;
+            letterDisplay += `<span class="letter misplaced-letter">${letter}</span>`;
+          }
+        } else {
+          incorrectLetters++;
+          letterDisplay += `<span class="letter incorrect-letter">${letter}</span>`;
+        }
+      }
+
+      document.getElementById("guessedWords").innerHTML += `<div class="guessed-word">${letterDisplay}</div>`;
+      document.getElementById("attempts").textContent = `Attempts left: ${--attemptsLeft}`;
+
+      if (attemptsLeft === 0) {
+        document.getElementById("wordDisplay").textContent = selectedWord;
+        document.getElementById("attempts").textContent = `Out of attempts! The word was ${selectedWord}.`;
+
+        // Show an alert when out of attempts
+        setTimeout(() => {
+          alert("Out of attempts! You ran out of tries.");
+          window.location.href = 'coinflip.html'; // Redirect to failure page after reaching maximum attempts
+        }, 500); // Adjust the timeout duration if needed
+
+        return;
+      }
+    }
+
+    function redirectToNextPage() {
+      window.location.href = 'trivia.html'; // Replace 'nextpage.html' with the URL of the next page
+    }
+
+    displayWord();
+  </script>
+  
+</body>
+</html>
