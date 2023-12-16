@@ -54,7 +54,7 @@
 
     function handleClick() {
       totalClicks++;
-      document.getElementById('randomButton').textContent = 'Press Me (' + totalClicks + ')';
+      document.getElementById('randomButton').textContent = '4 - Press Me - ☸ (' + totalClicks + ')';
 
       if (totalClicks > 5) {
         movingAfter5Clicks = true;
@@ -78,7 +78,7 @@
     function initializeGame() {
       requiredClicks = getRandomNumber(10, 20);
       totalClicks = 0;
-      document.getElementById('randomButton').textContent = 'Press Me';
+      document.getElementById('randomButton').textContent = '4 - Press Me - ☸';
       moveButtonRandomly();
     }
 

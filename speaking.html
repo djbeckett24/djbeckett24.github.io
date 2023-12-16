@@ -44,68 +44,67 @@
 <body>
   <h1>8 - Speech Recognition Game - ♚</h1>
   <p>Please say:</p>
-  <p id="randomStatement">"Hello"</p>
+  <p id="randomStatement"></p>
   
   <button id="startButton">Start</button>
 
-  <div id="listeningPopup" class="popup">
-    <p>Listening...</p>
-  </div>
-
   <div id="correctPopup" class="popup">
+    <p id="correctRecordedStatement"></p>
     <p>Correct statement! Click anywhere to continue.</p>
   </div>
 
   <div id="incorrectPopup" class="popup">
-    <p>Sorry, you made a mistake! Click anywhere to continue.</p>
+    <p id="incorrectRecordedStatement"></p>
+    <p>Incorrect statement! Click anywhere to continue.</p>
   </div>
 
   <script>
     const statements = [
-    "David is great", "David is amazing", "David is so clever",
+      "David is great", "David is amazing", "David is so clever",
       "Sally sold seashells by the seashore", "David is wonderful", "David is brilliant",
       "David is excellent", "David is so funny",
       "David is the best", "David is my favorite relative"
     ];
+
 
     const randomIndex = Math.floor(Math.random() * statements.length);
     const randomStatement = statements[randomIndex].toLowerCase();
 
     document.getElementById('randomStatement').textContent = `"${randomStatement}"`;
 
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+
     const startButton = document.getElementById('startButton');
-    const listeningPopup = document.getElementById('listeningPopup');
     const correctPopup = document.getElementById('correctPopup');
     const incorrectPopup = document.getElementById('incorrectPopup');
 
     startButton.addEventListener('click', function() {
-      listeningPopup.style.display = 'block';
-
-      // Calculate the duration based on the number of characters in the statement
-      const duration = randomStatement.length * 200; // 500 milliseconds per character (adjust as needed)
-
-      setTimeout(function() {
-        listeningPopup.style.display = 'none';
-
-        const simulatedSuccess = Math.random() <= 0.75; // 80% chance of success (1 in 5 chance of failure)
-
-        if (simulatedSuccess) {
-          correctPopup.style.display = 'block';
-        } else {
-          incorrectPopup.style.display = 'block';
-        }
-      }, duration);
+      recognition.start();
+      startButton.textContent = 'Listening...';
     });
 
+    recognition.onresult = function(event) {
+      const transcript = event.results[0][0].transcript.toLowerCase();
+      
+      if (transcript === randomStatement) {
+        document.getElementById('correctRecordedStatement').textContent = `You said: "${transcript}"`;
+        correctPopup.style.display = 'block';
+      } else {
+        document.getElementById('incorrectRecordedStatement').textContent = `You said: "${transcript}"`;
+        incorrectPopup.style.display = 'block';
+      }
+      recognition.stop(); // Stop listening after processing speech
+    };
+
     // Close popups on click
-    [listeningPopup, correctPopup, incorrectPopup].forEach(popup => {
+    [correctPopup, incorrectPopup].forEach(popup => {
       popup.addEventListener('click', function() {
         popup.style.display = 'none';
       });
     });
 
-     // Redirect after closing popup
-     correctPopup.addEventListener('click', function() {
+    // Redirect after closing popup
+    correctPopup.addEventListener('click', function() {
       window.location.href = 'yousure.html';
     });
 
@@ -113,6 +112,14 @@
       window.location.href = 'checkpoint.html';
     });
 
+    // Stop recognition when leaving or closing the page
+    window.addEventListener('pagehide', function() {
+      recognition.stop();
+    });
+
+    window.addEventListener('beforeunload', function() {
+      recognition.stop();
+    });
   </script>
 </body>
 </html>
