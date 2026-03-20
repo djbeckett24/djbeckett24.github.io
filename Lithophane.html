@@ -1,0 +1,264 @@
+<!-- lithophane.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lithophane Lamp</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #0f172a;
+      color: #e2e8f0;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    a { color: #38bdf8; text-decoration: none; }
+
+    .gallery-container {
+      position: relative;
+      width: 100%;
+      height: 400px;
+      margin-bottom: 30px;
+      overflow: hidden;
+      border-radius: 10px;
+      background-color: #1e293b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* each slide is a positioned container; media sits inside and is scaled */
+    .gallery-item {
+      position: absolute;
+      inset: 0; /* top:0; right:0; bottom:0; left:0; */
+      display: none;
+      background-color: #0b1220; /* neutral letterbox color */
+      align-items: center;
+      justify-content: center;
+      padding: 20px 0; /* add vertical padding above/below media */
+      box-sizing: border-box; /* ensure padding doesn't overflow */
+    }
+
+    .gallery-item.active {
+      display: flex;
+      z-index: 2;
+    }
+
+    /* ensure image and video elements fill the slide and preserve aspect ratio */
+    .gallery-item img,
+    .gallery-item video {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .gallery-controls {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      z-index: 5; /* ensure controls appear above slides */
+      pointer-events: auto;
+    }
+
+    .gallery-controls button {
+      background: #38bdf8;
+      border: none;
+      padding: 8px 12px;
+      margin: 0 5px;
+      border-radius: 5px;
+      cursor: pointer;
+      color: #0f172a;
+      font-weight: bold;
+      z-index: 6;
+    }
+  </style>
+</head>
+<body>
+ 
+<div class="container">
+ 
+   <a href="index.html">← Back to Portfolio</a>
+ 
+   <h1>Lithophane Lamp</h1>
+   <!-- <p><strong>Summary:</strong> Brief overview of the project and its purpose.</p> -->
+ 
+   <div class="gallery-container">
+     <div class="gallery-item active">
+       <img src="assets/LithophaneLampReal.PNG" alt="Gallery Image 1">
+     </div>
+     <div class="gallery-item">
+       <img src="assets/LithophaneLampSS.jpg" alt="Gallery Image 2">
+     </div>
+     <div class="gallery-item">
+       <video muted loop>
+         <source src="assets/LithophaneLampVideo.mp4" type="video/mp4">
+         Your browser does not support the video tag.
+       </video>
+     </div>
+     <div class="gallery-controls">
+       <button onclick="prevSlide()">◀</button>
+       <button onclick="nextSlide()">▶</button>
+     </div>
+   </div>
+ 
+   <div class="section">
+     <h2>Description</h2>
+     <p>This is a fully 3D printed light box to display 3D printed Lithophane pictures designed as a gift for my granparents. 
+        The box was fully designed by me using Fusion 360 and printed on my Ender 3 V2 printer. The top of the box is attached using strong magnets
+        and was designed to fit 4 Pictures designed using <a href="https://www.itslitho.com" target="_blank">ItsLitho</a>. 
+        The Box is lit using an LED puck light which was designed into the box and soldered/connected to a barrel jack connection allowing it to be powered by
+        a simple wall power supply. 
+    </p>
+   </div>
+ 
+   <!-- <div class="section">
+     <h2>Technical Details</h2>
+     <ul>
+       <li>Tools Used: SolidWorks, Python, Altium</li>
+       <li>Manufacturing: FDM 3D Printing</li>
+       <li>Key Features: Performance improvements, cost reduction</li>
+     </ul>
+   </div> -->
+ 
+   <!-- <div class="section">
+     <h2>Results</h2>
+     <p>What impact the project had (performance gains, cost savings, etc.).</p>
+   </div> -->
+ 
+</div>
+ 
+<script>
+  let currentIndex = 0;
+  const slides = document.querySelectorAll('.gallery-item');
+  const DEFAULT_INTERVAL = 5000; // fallback interval for images/non-timed media
+
+  let autoTimer = null;
+  let currentVideo = null;
+  let videoEndHandler = null;
+  let loadedMetaHandler = null;
+
+  function clearAutoHandlers() {
+    if (autoTimer) {
+      clearTimeout(autoTimer);
+      autoTimer = null;
+    }
+    if (currentVideo && videoEndHandler) {
+      currentVideo.removeEventListener('ended', videoEndHandler);
+      videoEndHandler = null;
+    }
+    if (currentVideo && loadedMetaHandler) {
+      currentVideo.removeEventListener('loadedmetadata', loadedMetaHandler);
+      loadedMetaHandler = null;
+    }
+    if (currentVideo) {
+      try { currentVideo.pause(); } catch (e) {}
+      currentVideo = null;
+    }
+  }
+
+  function showSlide(index) {
+    // clear handlers for previous slide before activating the new one
+    clearAutoHandlers();
+
+    slides.forEach((slide, i) => {
+      slide.classList.toggle('active', i === index);
+      // pause/reset any video that is not active
+      const v = slide.querySelector('video');
+      if (v && i !== index) {
+        try { v.pause(); v.currentTime = 0; } catch (e) {}
+      }
+    });
+
+    // if the new slide has a video, start it and wait for it to finish
+    const active = slides[index];
+    const vid = active.querySelector('video');
+    if (vid) {
+      currentVideo = vid;
+      // ensure slideshow doesn't loop the video forever
+      vid.loop = false;
+      // play from start
+      try { vid.currentTime = 0; } catch (e) {}
+      vid.play().catch(() => {}); // ignore autoplay blocking errors
+
+      // handler to advance when video ends
+      videoEndHandler = () => {
+        clearAutoHandlers();
+        nextSlide();
+      };
+      vid.addEventListener('ended', videoEndHandler);
+
+      // if duration is available use it as a fallback timer (some browsers may not fire ended due to autoplay issues)
+      if (!isNaN(vid.duration) && isFinite(vid.duration) && vid.duration > 0) {
+        autoTimer = setTimeout(() => {
+          // remove the ended listener to avoid double-advance
+          if (videoEndHandler) vid.removeEventListener('ended', videoEndHandler);
+          clearAutoHandlers();
+          nextSlide();
+        }, Math.ceil(vid.duration * 1000));
+      } else {
+        // wait for metadata to load to get duration, then set a timeout
+        loadedMetaHandler = () => {
+          if (!isNaN(vid.duration) && isFinite(vid.duration) && vid.duration > 0) {
+            autoTimer = setTimeout(() => {
+              if (videoEndHandler) vid.removeEventListener('ended', videoEndHandler);
+              clearAutoHandlers();
+              nextSlide();
+            }, Math.ceil(vid.duration * 1000));
+          }
+        };
+        vid.addEventListener('loadedmetadata', loadedMetaHandler);
+      }
+
+      return; // we've scheduled next advance for video; skip image logic
+    }
+
+    // if there's a GIF, try to use a data-duration attribute (seconds). Fallback to DEFAULT_INTERVAL.
+    const img = active.querySelector('img');
+    if (img && img.src && img.src.toLowerCase().endsWith('.gif')) {
+      const durAttr = img.dataset.duration;
+      const dur = parseFloat(durAttr);
+      if (!isNaN(dur) && dur > 0) {
+        autoTimer = setTimeout(nextSlide, Math.ceil(dur * 1000));
+      } else {
+        // no duration provided for GIF: fall back to default interval
+        // (Tip: add data-duration="X" to the <img> tag where X is the gif length in seconds)
+        autoTimer = setTimeout(nextSlide, DEFAULT_INTERVAL);
+      }
+      return;
+    }
+
+    // default behavior for static images or other content
+    autoTimer = setTimeout(nextSlide, DEFAULT_INTERVAL);
+  }
+
+  function nextSlide() {
+    clearAutoHandlers();
+    currentIndex = (currentIndex + 1) % slides.length;
+    showSlide(currentIndex);
+  }
+
+  function prevSlide() {
+    clearAutoHandlers();
+    currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+    showSlide(currentIndex);
+  }
+
+  // show initial slide and start auto-cycle
+  showSlide(currentIndex);
+
+  // keep an overall safety interval in case something goes wrong (not strictly necessary)
+  // Note: we do not use setInterval for normal cycling anymore because timing is per-slide.
+</script>
+ 
+ </body>
+ </html>
