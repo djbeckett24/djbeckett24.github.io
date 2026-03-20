@@ -25,6 +25,7 @@
       margin-bottom: 40px;
       border-bottom: 2px solid #334155;
       padding-bottom: 15px;
+      flex-wrap: wrap;
     }
 
     .profile {
@@ -172,15 +173,18 @@
 
     .tags {
       margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 6px; /* vertical gap then horizontal gap between tags */
     }
 
     .tag {
       display: inline-block;
       background: #334155;
-      padding: 4px 8px;
+      padding: 6px 10px;
       border-radius: 6px;
       font-size: 12px;
-      margin-right: 5px;
+      margin: 0; /* spacing handled by parent gap */
     }
 
     footer {
@@ -199,14 +203,25 @@
       .card {
         width: 100%;
       }
+      header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 12px;
+        }
+        header .contact {
+          width: 100%;
+          align-items: flex-start;
+          justify-content: flex-start;
+        }
+        header .contact .contact-item {
+          justify-content: flex-start;
+        }
     }
   </style>
 </head>
 <body>
 
   <div class="container">
-
-
     <header>
       <div class="profile">
         <img src="assets/profile.jpg" alt="Profile" class="profile-img">
