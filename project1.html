@@ -1,0 +1,141 @@
+<!-- project1.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Title</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #0f172a;
+      color: #e2e8f0;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    a { color: #38bdf8; text-decoration: none; }
+
+    .gallery-container {
+      position: relative;
+      width: 100%;
+      height: 400px;
+      margin-bottom: 30px;
+      overflow: hidden;
+      border-radius: 10px;
+      background-color: #1e293b;
+    }
+
+    .gallery-item {
+      display: none;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .gallery-item.active {
+      display: block;
+    }
+
+    .gallery-controls {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .gallery-controls button {
+      background: #38bdf8;
+      border: none;
+      padding: 8px 12px;
+      margin: 0 5px;
+      border-radius: 5px;
+      cursor: pointer;
+      color: #0f172a;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <a href="index.html">← Back to Portfolio</a>
+
+  <h1>Project Title</h1>
+  <p><strong>Summary:</strong> Brief overview of the project and its purpose.</p>
+
+  <div class="gallery-container">
+    <img src="image1.jpg" class="gallery-item active" alt="Gallery Image 1">
+    <img src="image2.jpg" class="gallery-item" alt="Gallery Image 2">
+    <img src="image3.gif" class="gallery-item" alt="Gallery GIF">
+    <video class="gallery-item" muted loop>
+      <source src="video1.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+    <div class="gallery-controls">
+      <button onclick="prevSlide()">◀</button>
+      <button onclick="nextSlide()">▶</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Description</h2>
+    <p>Detailed explanation of the project, design decisions, and challenges.</p>
+  </div>
+
+  <div class="section">
+    <h2>Technical Details</h2>
+    <ul>
+      <li>Tools Used: SolidWorks, Python, Altium</li>
+      <li>Manufacturing: CNC, 3D Printing</li>
+      <li>Key Features: Performance improvements, cost reduction</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>Results</h2>
+    <p>What impact the project had (performance gains, cost savings, etc.).</p>
+  </div>
+
+</div>
+
+<script>
+  let currentIndex = 0;
+  const items = document.querySelectorAll('.gallery-item');
+
+  function showSlide(index) {
+    items.forEach((item, i) => {
+      item.classList.remove('active');
+      if(i === index) item.classList.add('active');
+      if(item.tagName === 'VIDEO') {
+        if(i === index) item.play();
+        else item.pause();
+      }
+    });
+  }
+
+  function nextSlide() {
+    currentIndex = (currentIndex + 1) % items.length;
+    showSlide(currentIndex);
+  }
+
+  function prevSlide() {
+    currentIndex = (currentIndex - 1 + items.length) % items.length;
+    showSlide(currentIndex);
+  }
+
+  // Auto cycle every 5 seconds
+  setInterval(nextSlide, 5000);
+</script>
+
+</body>
+</html>
